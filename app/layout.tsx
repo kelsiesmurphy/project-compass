@@ -4,6 +4,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Plausible from "@/components/plausible-analytics";
+import { brand } from "@/lib/constants/brand";
 
 const interSans = Inter({
   variable: "--font-inter-sans",
@@ -11,8 +13,8 @@ const interSans = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Project Compass",
-  description: "A platform for exploring and learning about the world",
+  title: brand.name,
+  description: brand.description,
 };
 
 export default function RootLayout({
@@ -23,6 +25,9 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" className="h-full" suppressHydrationWarning>
+        <head>
+          <Plausible />
+        </head>
         <body className={`${interSans.variable} antialiased`}>
           <ThemeProvider
             attribute="class"

@@ -8,7 +8,7 @@ import {
 import Link from "next/link";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { navItems } from "@/constants/navigation-items";
+import { navItems } from "@/lib/constants/navigation-items";
 
 export default function DesktopNavigation() {
   return (

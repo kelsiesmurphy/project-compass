@@ -20,7 +20,7 @@ import { Menu } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { navItems } from "@/constants/navigation-items";
+import { navItems } from "@/lib/constants/navigation-items";
 
 export default function MobileNavigation() {
   const [sheetOpen, setSheetOpen] = useState(false);

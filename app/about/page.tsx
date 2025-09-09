@@ -7,20 +7,17 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { brand } from "@/lib/constants/brand";
 
 export default function AboutUs() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col gap-20">
-      {/* Hero Section */}
       <section className="space-y-6 md:space-y-8">
         <h1 className="text-4xl md:text-5xl font-extrabold">
-          About Project Compass
+          About {brand.name}
         </h1>
         <p className="text-lg text-muted-foreground max-w-3xl">
-          Project Compass is a platform for explorers and learners who want to
-          discover the world from anywhere. Our mission is to make learning
-          about geography, cultures, and history engaging, fun, and
-          community-driven.
+          {brand.description}
         </p>
         <Button asChild>
           <a href="/signup">Join the Community</a>

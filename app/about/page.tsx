@@ -8,10 +8,11 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { brand } from "@/lib/constants/brand";
+import Footer from "@/components/footer";
 
 export default function AboutUs() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col gap-20">
+    <div className="max-w-7xl mx-auto px-4 pt-16 flex flex-col gap-20">
       <section className="space-y-6 md:space-y-8">
         <h1 className="text-4xl md:text-5xl font-extrabold">
           About {brand.name}
@@ -75,6 +76,7 @@ export default function AboutUs() {
           <a href="/contact">Contact Us</a>
         </Button>
       </section>
+      <Footer />
     </div>
   );
 }

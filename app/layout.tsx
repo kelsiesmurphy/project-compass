@@ -6,6 +6,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Plausible from "@/components/plausible-analytics";
 import { brand } from "@/lib/constants/brand";
+import LenisWrapper from "@/components/lenis-wrapper";
 
 const interSans = Inter({
   variable: "--font-inter-sans",
@@ -35,12 +36,14 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="flex flex-col min-h-screen">
-              <Header />
-              <main id="content" className="flex-1 flex pt-16">
-                {children}
-              </main>
-            </div>
+            <LenisWrapper>
+              <div className="flex flex-col min-h-screen">
+                <Header />
+                <main id="content" className="flex-1 flex pt-16">
+                  {children}
+                </main>
+              </div>
+            </LenisWrapper>
           </ThemeProvider>
         </body>
       </html>

@@ -7,7 +7,7 @@ import { brand } from "@/lib/constants/brand";
 
 export default function Footer() {
   return (
-    <section className="px-4">
+    <section className="px-4 w-full">
       <div className="py-4 text-sm text-muted-foreground flex flex-wrap gap-4 justify-between items-center">
         <div className="flex gap-2 items-center">
           <p>

@@ -1,18 +1,25 @@
-// import { defineSchema, defineTable } from "convex/server";
+// convex/schema.ts
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
 
-// export default defineSchema({
-//   questions: defineTable({
-//     question: "string", // e.g. "What is the capital of Brazil?"
-//     options: "array",   // ["Rio de Janeiro", "Brasília", "São Paulo", "Salvador"]
-//     correctIndex: "number", // index in options[]
-//     category: "string", // optional: "capital", "flag", "geography"
-//   }),
+export default defineSchema({
+  questions: defineTable({
+    question: v.string(),
+    options: v.array(v.string()),
+    correctIndex: v.number(),
+    category: v.optional(v.string()),
+  }),
 
-//   quiz_attempts: defineTable({
-//     userId: "string",
-//     questionId: "string",
-//     chosenIndex: "number",
-//     isCorrect: "boolean",
-//     createdAt: "number",
-//   }),
-// });
+  quiz_attempts: defineTable({
+    userId: v.string(),
+    questionId: v.id("questions"),
+    chosenIndex: v.number(),
+    isCorrect: v.boolean(),
+    createdAt: v.number(),
+  }),
+
+  messages: defineTable({
+    author: v.string(),
+    content: v.string(),
+  }),
+});

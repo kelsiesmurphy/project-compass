@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  SignedOut,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  UserButton,
-} from "@clerk/nextjs";
+import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import {
   Sheet,
   SheetContent,
@@ -21,6 +15,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { navItems } from "@/lib/constants/navigation-items";
+import { Authenticated, Unauthenticated } from "convex/react";
 
 export default function MobileNavigation() {
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -37,7 +32,7 @@ export default function MobileNavigation() {
           <SheetTitle>Menu</SheetTitle>
         </SheetHeader>
         <div className="flex flex-col gap-4 mt-4">
-          <SignedOut>
+          <Unauthenticated>
             {navItems.map((item) => (
               <SheetClose asChild key={item.href}>
                 <Button variant="ghost" asChild>
@@ -56,11 +51,11 @@ export default function MobileNavigation() {
                 <Button>Sign up</Button>
               </SheetClose>
             </SignUpButton>
-          </SignedOut>
+          </Unauthenticated>
 
-          <SignedIn>
+          <Authenticated>
             <UserButton />
-          </SignedIn>
+          </Authenticated>
         </div>
       </SheetContent>
     </Sheet>

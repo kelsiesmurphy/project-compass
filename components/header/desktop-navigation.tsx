@@ -1,10 +1,7 @@
-import {
-  SignedOut,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  UserButton,
-} from "@clerk/nextjs";
+"use client";
+
+import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { Authenticated, Unauthenticated } from "convex/react";
 import Link from "next/link";
 import React from "react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +10,7 @@ import { navItems } from "@/lib/constants/navigation-items";
 export default function DesktopNavigation() {
   return (
     <div className="hidden md:flex items-center gap-x-4">
-      <SignedOut>
+      <Unauthenticated>
         {navItems.map((item) => (
           <Button variant="ghost" asChild key={item.href}>
             <Link href={item.href}>{item.label}</Link>
@@ -25,11 +22,11 @@ export default function DesktopNavigation() {
         <SignUpButton>
           <Button>Sign up</Button>
         </SignUpButton>
-      </SignedOut>
+      </Unauthenticated>
 
-      <SignedIn>
+      <Authenticated>
         <UserButton />
-      </SignedIn>
+      </Authenticated>
     </div>
   );
 }

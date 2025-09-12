@@ -13,9 +13,8 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as messages from "../messages.js";
-import type * as quiz from "../quiz.js";
 import type * as seed from "../seed.js";
+import type * as trivia from "../trivia.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -26,9 +25,8 @@ import type * as seed from "../seed.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  messages: typeof messages;
-  quiz: typeof quiz;
   seed: typeof seed;
+  trivia: typeof trivia;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

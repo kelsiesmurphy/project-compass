@@ -21,7 +21,7 @@ export default defineSchema({
     triviaQuizId: v.id("trivia_quizzes"),
     startedAt: v.number(),
     completedAt: v.optional(v.number()),
-    score: v.optional(v.number()), // calculated at the end
+    score: v.optional(v.number()),
   }),
 
   trivia_answers: defineTable({

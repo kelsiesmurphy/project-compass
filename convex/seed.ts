@@ -2,7 +2,7 @@
 import { mutation } from "./_generated/server";
 
 // Seed: World Capitals Quiz
-export const seedCapitalTrivia = mutation({
+export const seedCapitalQuiz = mutation({
   args: {},
   handler: async ({ db }) => {
     const questions = [
@@ -38,24 +38,24 @@ export const seedCapitalTrivia = mutation({
       },
     ];
 
-    const triviaQuestionIds = [];
+    const quizQuestionIds = [];
     for (const q of questions) {
-      const id = await db.insert("trivia_questions", q);
-      triviaQuestionIds.push(id);
+      const id = await db.insert("quiz_questions", q);
+      quizQuestionIds.push(id);
     }
 
-    const quiz = await db.insert("trivia_quizzes", {
+    const quiz = await db.insert("quizzes", {
       title: "World Capitals Quiz",
       description: "Test your knowledge of world capitals!",
-      triviaQuestionIds,
+      quizQuestionIds,
     });
 
-    return { quiz, questions: triviaQuestionIds.length };
+    return { quiz, questions: quizQuestionIds.length };
   },
 });
 
-// Seed: General Country Trivia Quiz
-export const seedGeneralCountryTrivia = mutation({
+// Seed: General Country Quiz
+export const seedGeneralCountryQuiz = mutation({
   args: {},
   handler: async ({ db }) => {
     const questions = [
@@ -91,18 +91,18 @@ export const seedGeneralCountryTrivia = mutation({
       },
     ];
 
-    const triviaQuestionIds = [];
+    const quizQuestionIds = [];
     for (const q of questions) {
-      const id = await db.insert("trivia_questions", q);
-      triviaQuestionIds.push(id);
+      const id = await db.insert("quiz_questions", q);
+      quizQuestionIds.push(id);
     }
 
-    const quiz = await db.insert("trivia_quizzes", {
-      title: "General Country Trivia",
+    const quiz = await db.insert("quizzes", {
+      title: "General Country Quiz",
       description: "How much do you know about countries around the world?",
-      triviaQuestionIds,
+      quizQuestionIds,
     });
 
-    return { quiz, questions: triviaQuestionIds.length };
+    return { quiz, questions: quizQuestionIds.length };
   },
 });

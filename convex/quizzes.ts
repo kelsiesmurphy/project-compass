@@ -5,40 +5,37 @@ import { v } from "convex/values";
 export const getAllQuizzes = query({
   args: {},
   handler: async ({ db }) => {
-    return await db.query("trivia_quizzes").collect();
+    return await db.query("quizzes").collect();
   },
 });
 
-// Start a new trivia session
-export const startTrivia = mutation({
-  args: { triviaQuizId: v.id("trivia_quizzes"), userId: v.string() },
-  handler: async ({ db }, { triviaQuizId, userId }) => {
-    const triviaSessionId = await db.insert("trivia_sessions", {
+// Start a new quiz session
+export const startQuiz = mutation({
+  args: { quizId: v.id("quizzes"), userId: v.string() },
+  handler: async ({ db }, { quizId, userId }) => {
+    const quizSessionId = await db.insert("quiz_sessions", {
       userId,
-      triviaQuizId,
+      quizId,
       startedAt: Date.now(),
     });
-    return triviaSessionId;
+    return quizSessionId;
   },
 });
 
 // Answer a question
 export const answerQuestion = mutation({
   args: {
-    triviaSessionId: v.id("trivia_sessions"),
-    triviaQuestionId: v.id("trivia_questions"),
+    quizSessionId: v.id("quiz_sessions"),
+    quizQuestionId: v.id("quiz_questions"),
     chosenIndex: v.number(),
   },
-  handler: async (
-    { db },
-    { triviaSessionId, triviaQuestionId, chosenIndex }
-  ) => {
-    const q = await db.get(triviaQuestionId);
+  handler: async ({ db }, { quizSessionId, quizQuestionId, chosenIndex }) => {
+    const q = await db.get(quizQuestionId);
     if (!q) throw new Error("Question not found");
 
-    return await db.insert("trivia_answers", {
-      triviaSessionId,
-      triviaQuestionId,
+    return await db.insert("quiz_answers", {
+      quizSessionId,
+      quizQuestionId,
       chosenIndex,
       isCorrect: chosenIndex === q.correctIndex,
       answeredAt: Date.now(),
@@ -46,36 +43,36 @@ export const answerQuestion = mutation({
   },
 });
 
-// Complete trivia session
-export const completeTrivia = mutation({
-  args: { triviaSessionId: v.id("trivia_sessions") },
-  handler: async ({ db }, { triviaSessionId }) => {
+// Complete quiz session
+export const completeQuiz = mutation({
+  args: { quizSessionId: v.id("quiz_sessions") },
+  handler: async ({ db }, { quizSessionId }) => {
     const answers = await db
-      .query("trivia_answers")
-      .withIndex("by_session", (q) => q.eq("triviaSessionId", triviaSessionId))
+      .query("quiz_answers")
+      .withIndex("by_session", (q) => q.eq("quizSessionId", quizSessionId))
       .collect();
 
     const score = answers.filter((a) => a.isCorrect).length;
 
-    await db.patch(triviaSessionId, {
+    await db.patch(quizSessionId, {
       completedAt: Date.now(),
       score,
     });
 
     // Return just the session ID and score for frontend
-    return { sessionId: triviaSessionId, score, total: answers.length };
+    return { sessionId: quizSessionId, score, total: answers.length };
   },
 });
 
 // Fetch a quiz with its questions
 export const getQuizWithQuestions = query({
-  args: { quizId: v.id("trivia_quizzes") },
+  args: { quizId: v.id("quizzes") },
   handler: async ({ db }, { quizId }) => {
     const quiz = await db.get(quizId);
     if (!quiz) return null;
 
     const questions = await Promise.all(
-      quiz.triviaQuestionIds.map((id) => db.get(id))
+      quiz.quizQuestionIds.map((id) => db.get(id))
     );
 
     return { ...quiz, questions };
@@ -84,20 +81,20 @@ export const getQuizWithQuestions = query({
 
 // Fetch a session with answers and questions
 export const getSessionWithAnswers = query({
-  args: { triviaSessionId: v.id("trivia_sessions") },
-  handler: async ({ db }, { triviaSessionId }) => {
-    const session = await db.get(triviaSessionId);
+  args: { quizSessionId: v.id("quiz_sessions") },
+  handler: async ({ db }, { quizSessionId }) => {
+    const session = await db.get(quizSessionId);
     if (!session) return null;
 
     const answers = await db
-      .query("trivia_answers")
-      .withIndex("by_session", (q) => q.eq("triviaSessionId", triviaSessionId))
+      .query("quiz_answers")
+      .withIndex("by_session", (q) => q.eq("quizSessionId", quizSessionId))
       .collect();
 
     const answersWithQ = await Promise.all(
       answers.map(async (a) => ({
         ...a,
-        question: await db.get(a.triviaQuestionId),
+        question: await db.get(a.quizQuestionId),
       }))
     );
 
@@ -110,7 +107,7 @@ export const getUserSessions = query({
   args: { userId: v.string() },
   handler: async ({ db }, { userId }) => {
     return await db
-      .query("trivia_sessions")
+      .query("quiz_sessions")
       .filter((q) => q.eq(q.field("userId"), userId))
       .order("desc")
       .collect();

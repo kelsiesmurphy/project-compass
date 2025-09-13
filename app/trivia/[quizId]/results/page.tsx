@@ -6,16 +6,16 @@ import { Id } from "@/convex/_generated/dataModel"; // 👈 import Id type
 
 export default function ResultsPage() {
   const search = useSearchParams();
-  const triviaSessionId = search.get("triviaSessionId");
+  const quizSessionId = search.get("quizSessionId");
 
   const session = useQuery(
-    api.trivia.getSessionWithAnswers,
-    triviaSessionId
-      ? { triviaSessionId: triviaSessionId as Id<"trivia_sessions"> }
+    api.quizzes.getSessionWithAnswers,
+    quizSessionId
+      ? { quizSessionId: quizSessionId as Id<"quiz_sessions"> }
       : "skip"
   );
 
-  if (!triviaSessionId) {
+  if (!quizSessionId) {
     return <div>Missing session id.</div>;
   }
 

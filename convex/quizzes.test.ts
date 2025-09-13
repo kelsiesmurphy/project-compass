@@ -6,7 +6,7 @@ import { modules } from "./test.setup";
 
 async function seedQuiz(t: ReturnType<typeof convexTest>) {
   const q1 = await t.run(({ db }) =>
-    db.insert("trivia_questions", {
+    db.insert("quiz_questions", {
       text: "What is the capital of France?",
       options: ["Paris", "Berlin", "Rome", "Madrid"],
       correctIndex: 0,
@@ -15,7 +15,7 @@ async function seedQuiz(t: ReturnType<typeof convexTest>) {
   );
 
   const q2 = await t.run(({ db }) =>
-    db.insert("trivia_questions", {
+    db.insert("quiz_questions", {
       text: "What is the capital of Japan?",
       options: ["Seoul", "Tokyo", "Kyoto", "Osaka"],
       correctIndex: 1,
@@ -24,29 +24,29 @@ async function seedQuiz(t: ReturnType<typeof convexTest>) {
   );
 
   const quiz = await t.run(({ db }) =>
-    db.insert("trivia_quizzes", {
+    db.insert("quizzes", {
       title: "Test Quiz",
       description: "Testing capitals",
-      triviaQuestionIds: [q1, q2],
+      quizQuestionIds: [q1, q2],
     })
   );
 
   return { quiz, questions: [q1, q2] };
 }
 
-test("start a trivia session", async () => {
+test("start a quiz session", async () => {
   const t = convexTest(schema, modules);
   const { quiz } = await seedQuiz(t);
 
-  const sessionId = await t.mutation(api.trivia.startTrivia, {
-    triviaQuizId: quiz,
+  const sessionId = await t.mutation(api.quizzes.startQuiz, {
+    quizId: quiz,
     userId: "user123",
   });
 
   const session = await t.run(({ db }) => db.get(sessionId));
   expect(session).toMatchObject({
     userId: "user123",
-    triviaQuizId: quiz,
+    quizId: quiz,
   });
 });
 
@@ -54,27 +54,27 @@ test("answer questions and complete session", async () => {
   const t = convexTest(schema, modules);
   const { quiz, questions } = await seedQuiz(t);
 
-  const sessionId = await t.mutation(api.trivia.startTrivia, {
-    triviaQuizId: quiz,
+  const sessionId = await t.mutation(api.quizzes.startQuiz, {
+    quizId: quiz,
     userId: "user123",
   });
 
   // Answer first correctly
-  await t.mutation(api.trivia.answerQuestion, {
-    triviaSessionId: sessionId,
-    triviaQuestionId: questions[0],
+  await t.mutation(api.quizzes.answerQuestion, {
+    quizSessionId: sessionId,
+    quizQuestionId: questions[0],
     chosenIndex: 0, // correct
   });
 
   // Answer second incorrectly
-  await t.mutation(api.trivia.answerQuestion, {
-    triviaSessionId: sessionId,
-    triviaQuestionId: questions[1],
+  await t.mutation(api.quizzes.answerQuestion, {
+    quizSessionId: sessionId,
+    quizQuestionId: questions[1],
     chosenIndex: 0, // wrong
   });
 
-  const result = await t.mutation(api.trivia.completeTrivia, {
-    triviaSessionId: sessionId,
+  const result = await t.mutation(api.quizzes.completeQuiz, {
+    quizSessionId: sessionId,
   });
 
   expect(result.score).toBe(1);
@@ -89,7 +89,7 @@ test("get quiz with questions", async () => {
   const t = convexTest(schema, modules);
   const { quiz, questions } = await seedQuiz(t);
 
-  const fullQuiz = await t.query(api.trivia.getQuizWithQuestions, {
+  const fullQuiz = await t.query(api.quizzes.getQuizWithQuestions, {
     quizId: quiz,
   });
 
@@ -101,19 +101,19 @@ test("get session with answers", async () => {
   const t = convexTest(schema, modules);
   const { quiz, questions } = await seedQuiz(t);
 
-  const sessionId = await t.mutation(api.trivia.startTrivia, {
-    triviaQuizId: quiz,
+  const sessionId = await t.mutation(api.quizzes.startQuiz, {
+    quizId: quiz,
     userId: "user123",
   });
 
-  await t.mutation(api.trivia.answerQuestion, {
-    triviaSessionId: sessionId,
-    triviaQuestionId: questions[0],
+  await t.mutation(api.quizzes.answerQuestion, {
+    quizSessionId: sessionId,
+    quizQuestionId: questions[0],
     chosenIndex: 0,
   });
 
-  const session = await t.query(api.trivia.getSessionWithAnswers, {
-    triviaSessionId: sessionId,
+  const session = await t.query(api.quizzes.getSessionWithAnswers, {
+    quizSessionId: sessionId,
   });
 
   expect(session?.answers.length).toBe(1);
@@ -124,12 +124,12 @@ test("get user sessions", async () => {
   const t = convexTest(schema, modules);
   const { quiz } = await seedQuiz(t);
 
-  await t.mutation(api.trivia.startTrivia, {
-    triviaQuizId: quiz,
+  await t.mutation(api.quizzes.startQuiz, {
+    quizId: quiz,
     userId: "user123",
   });
 
-  const sessions = await t.query(api.trivia.getUserSessions, {
+  const sessions = await t.query(api.quizzes.getUserSessions, {
     userId: "user123",
   });
 

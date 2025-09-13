@@ -10,7 +10,7 @@
 // export default function Quiz() {
 //   const { user } = useUser();
 //   const question = useQuery(api.quiz,);
-//   const submitAnswer = useMutation(api.quiz.submitAnswer);
+//   const submitAnswer = useMutation(api.quizzes.submitAnswer);
 
 //   const [feedback, setFeedback] = useState<string | null>(null);
 

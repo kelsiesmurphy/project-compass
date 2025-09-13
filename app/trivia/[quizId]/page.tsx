@@ -14,18 +14,18 @@ export default function PlayQuiz({
   params: Promise<{ quizId: string }>;
 }) {
   const { quizId: rawQuizId } = use(params);
-  const quizId = rawQuizId as Id<"trivia_quizzes">;
+  const quizId = rawQuizId as Id<"quizzes">;
 
   const { userId } = useAuth();
   const router = useRouter();
 
-  const quiz = useQuery(api.trivia.getQuizWithQuestions, { quizId });
-  const start = useMutation(api.trivia.startTrivia);
-  const answer = useMutation(api.trivia.answerQuestion);
-  const complete = useMutation(api.trivia.completeTrivia);
+  const quiz = useQuery(api.quizzes.getQuizWithQuestions, { quizId });
+  const start = useMutation(api.quizzes.startQuiz);
+  const answer = useMutation(api.quizzes.answerQuestion);
+  const complete = useMutation(api.quizzes.completeQuiz);
 
-  const [triviaSessionId, setTriviaSessionId] =
-    useState<Id<"trivia_sessions"> | null>(null);
+  const [quizSessionId, setQuizSessionId] =
+    useState<Id<"quiz_sessions"> | null>(null);
   const [index, setIndex] = useState(0);
 
   if (!quiz) return <div>Loading…</div>;
@@ -42,30 +42,30 @@ export default function PlayQuiz({
     }
 
     // Start returns just the session ID now
-    const sessionId = await start({ triviaQuizId: quizId, userId });
-    setTriviaSessionId(sessionId);
+    const sessionId = await start({ quizId: quizId, userId });
+    setQuizSessionId(sessionId);
   }
 
   async function handleAnswer(choice: number) {
-    if (!triviaSessionId || !current) return;
+    if (!quizSessionId || !current) return;
 
     await answer({
-      triviaSessionId,
-      triviaQuestionId: current._id,
+      quizSessionId,
+      quizQuestionId: current._id,
       chosenIndex: choice,
     });
 
     if (index + 1 < questions.length) {
       setIndex(index + 1);
     } else {
-      await complete({ triviaSessionId });
+      await complete({ quizSessionId });
       router.push(
-        `/trivia/${quizId}/results?triviaSessionId=${triviaSessionId.toString()}`
+        `/quiz/${quizId}/results?quizSessionId=${quizSessionId.toString()}`
       );
     }
   }
 
-  if (!triviaSessionId) {
+  if (!quizSessionId) {
     return (
       <div className="p-4">
         <h1 className="text-xl font-bold mb-4">{quiz.title}</h1>

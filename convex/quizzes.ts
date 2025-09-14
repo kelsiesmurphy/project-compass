@@ -22,23 +22,41 @@ export const startQuiz = mutation({
   },
 });
 
-// Answer a question
 export const answerQuestion = mutation({
   args: {
     quizSessionId: v.id("quiz_sessions"),
     quizQuestionId: v.id("quiz_questions"),
-    chosenIndex: v.number(),
+    answer: v.string(), // user’s raw answer (stringified)
+    metadata: v.optional(v.any()), // optional extra info
   },
-  handler: async ({ db }, { quizSessionId, quizQuestionId, chosenIndex }) => {
-    const q = await db.get(quizQuestionId);
-    if (!q) throw new Error("Question not found");
+  handler: async (
+    { db },
+    { quizSessionId, quizQuestionId, answer, metadata }
+  ) => {
+    const question = await db.get(quizQuestionId);
+    if (!question) throw new Error("Question not found");
+
+    let isCorrect = false;
+
+    if (question.type === "multiple_choice") {
+      // Multiple choice: check numeric index
+      const chosenIndex = parseInt(answer, 10);
+      isCorrect = chosenIndex === question.correctIndex;
+    } else if (question.type === "map_click") {
+      // Map click: check region name
+      const correctRegion = (
+        question.metadata as { correctRegion?: string }
+      )?.correctRegion?.toUpperCase();
+      isCorrect = answer.toUpperCase() === correctRegion;
+    }
 
     return await db.insert("quiz_answers", {
       quizSessionId,
       quizQuestionId,
-      chosenIndex,
-      isCorrect: chosenIndex === q.correctIndex,
+      answer, // raw string
+      isCorrect,
       answeredAt: Date.now(),
+      metadata,
     });
   },
 });

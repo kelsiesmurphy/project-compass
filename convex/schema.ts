@@ -8,6 +8,8 @@ export default defineSchema({
     options: v.array(v.string()), // ["Paris", "Berlin", "Rome", "Madrid"]
     correctIndex: v.number(), // index in options[]
     category: v.optional(v.string()), // e.g. "capital", "flags"
+    type: v.string(), // "multiple_choice" | "map_click"
+    metadata: v.optional(v.any()), 
   }),
 
   quizzes: defineTable({
@@ -27,8 +29,9 @@ export default defineSchema({
   quiz_answers: defineTable({
     quizSessionId: v.id("quiz_sessions"),
     quizQuestionId: v.id("quiz_questions"),
-    chosenIndex: v.number(),
+    answer: v.string(), // JSON stringified (e.g. "2", or "{lat:...,lng:...}", or "NAMIBIA")
     isCorrect: v.boolean(),
     answeredAt: v.number(),
+    metadata: v.optional(v.any()), 
   }).index("by_session", ["quizSessionId"]),
 });

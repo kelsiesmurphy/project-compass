@@ -63,14 +63,14 @@ test("answer questions and complete session", async () => {
   await t.mutation(api.quizzes.answerQuestion, {
     quizSessionId: sessionId,
     quizQuestionId: questions[0],
-    chosenIndex: 0, // correct
+    answer: "0", // correct
   });
 
   // Answer second incorrectly
   await t.mutation(api.quizzes.answerQuestion, {
     quizSessionId: sessionId,
     quizQuestionId: questions[1],
-    chosenIndex: 0, // wrong
+    answer: "0", // wrong
   });
 
   const result = await t.mutation(api.quizzes.completeQuiz, {
@@ -109,7 +109,7 @@ test("get session with answers", async () => {
   await t.mutation(api.quizzes.answerQuestion, {
     quizSessionId: sessionId,
     quizQuestionId: questions[0],
-    chosenIndex: 0,
+    answer: "0",
   });
 
   const session = await t.query(api.quizzes.getSessionWithAnswers, {

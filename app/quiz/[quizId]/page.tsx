@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import type { Id } from "@/convex/_generated/dataModel";
 import { use } from "react";
+import MapQuestion from "@/components/map-question";
 
 export default function PlayQuiz({
   params,
@@ -46,13 +47,14 @@ export default function PlayQuiz({
     setQuizSessionId(sessionId);
   }
 
-  async function handleAnswer(choice: number) {
+  async function handleAnswerGeneric(answerValue: string, metadata?: unknown) {
     if (!quizSessionId || !current) return;
 
     await answer({
       quizSessionId,
       quizQuestionId: current._id,
-      chosenIndex: choice,
+      answer: answerValue,
+      metadata,
     });
 
     if (index + 1 < questions.length) {
@@ -78,18 +80,36 @@ export default function PlayQuiz({
   }
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="p-4 space-y-4 flex-1">
       <h2 className="text-lg font-semibold">
         Question {index + 1} of {questions.length}
       </h2>
-      <p className="text-xl">{current.text}</p>
-      <div className="grid gap-2 mt-4">
-        {current.options.map((opt: string, i: number) => (
-          <Button key={i} variant="outline" onClick={() => handleAnswer(i)}>
-            {opt}
-          </Button>
-        ))}
-      </div>
+
+      {current.type === "multiple_choice" && (
+        <>
+          <p className="text-xl">{current.text}</p>
+          <div className="grid gap-2 mt-4">
+            {current.options.map((opt: string, i: number) => (
+              <Button
+                key={i}
+                variant="outline"
+                onClick={() => handleAnswerGeneric(String(i))}
+              >
+                {opt}
+              </Button>
+            ))}
+          </div>
+        </>
+      )}
+
+      {current.type === "map_click" && (
+        <MapQuestion
+          question={current}
+          onAnswer={(regionName) =>
+            handleAnswerGeneric(regionName, { mapId: current.metadata?.mapId })
+          }
+        />
+      )}
     </div>
   );
 }
